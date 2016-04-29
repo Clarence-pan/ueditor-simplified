@@ -222,8 +222,26 @@ module.exports = function (grunt) {
                     disDir + "**/.git"
                 ]
             }
+        },
+        watch: {
+            all: {
+                files: [
+                    '_src/**/*.js',
+                    '_examples/**/*.html',
+                    '_examples/**/*.js',
+                    '_parse/**/*.js',
+                    'php/*.php',
+                    './ueditor.*.js',
+                    './Gruntfile.js'
+                ],
+                tasks: [
+                    'concat', 'cssmin', 'closurecompiler', 'copy:base', 'copy:' + server, 'copy:demo', 'replace:demo', 'clean'
+                ],
+                options: {
+                    spawn: false
+                }
+            }
         }
-
     });
 
     grunt.loadNpmTasks('grunt-text-replace');
@@ -233,6 +251,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-transcoding');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
     grunt.registerTask('default', 'UEditor build', function () {
 

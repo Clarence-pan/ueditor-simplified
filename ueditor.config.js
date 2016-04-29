@@ -343,6 +343,36 @@
 
         //webAppKey 百度应用的APIkey，每个站长必须首先去百度官网注册一个key后方能正常使用app功能，注册介绍，http://app.baidu.com/static/cms/getapikey.html
         //, webAppKey: ""
+
+        // 默认的CSS样式
+        , defaultCssValues: {
+            '*': {
+                '*': ['0', '0px', '0em', '0pt', 'normal', 'initial'],
+                'color': ['rgb(64, 64, 64)'],
+                'background-color': [ 'rgb(255, 255, 255)', '#ffffff', 'white' ],
+                'background': ['rgb(255, 255, 255)', '#ffffff', 'white'],
+                'white-space': ['normal'],
+                'font-family': ['*'],
+                'font-size': ['14px'],
+                'line-height': ['21px'],
+                'word-spacing': ['*']
+            },
+            'div': {
+                'text-align': ['left']
+            },
+            'p': {
+                'text-indent': ['2em'],
+                'text-align': ['left']
+            },
+            'span': {
+                'text-align': ['left']
+            },
+            'td': {
+                'border*': ['*'],
+                'padding*': ['*'],
+                'margin*': ['*']
+            }
+        }
     };
 
     function getUEBasePath(docUrl, confUrl) {
@@ -410,4 +440,7 @@
         getUEBasePath: getUEBasePath
     };
 
+
+    // just for debug
+    console.debug = console.log;
 })();

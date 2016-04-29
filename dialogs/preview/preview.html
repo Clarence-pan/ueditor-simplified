@@ -1,40 +1,157 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-    "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<!DOCTYPE HTML>
+<html lang="zh">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <style>
+        html, body, #preview {
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            border: none;
+        }
+        #toolbar{
+            text-align: center;
+            overflow: hidden;
+            height: 1rem;
+            background-color: #eeeeee;
+        }
+        #toolbar.with-scroll-bar{
+            position: relative;
+            left: -9px;
+        }
+        #toolbar .btn{
+            text-indent: -9999em;
+            height: 1rem;
+            border-top: 0;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            border-top: none;
+            border-bottom: none;
+            box-shadow: none;
+            border-left: 1px solid #333;
+            border-right: 1px solid #333;
+            outline: none;
+            background-color: transparent;
+        }
+        #toolbar .btn:visited,
+        #toolbar .btn:hover,
+        #toolbar .btn:active
+        {
+            outline: none;
+            border-top: none;
+            border-bottom: none;
+            box-shadow: none;
+        }
+
+        #toolbar .btn:hover{
+            background-color: #00a0e9;
+            border-color: #00a0e9;
+        }
+        #toolbar .btn-320{
+            text-indent: 0;
+            width: 320px;
+            margin-left: -160px;
+            z-index: 30;
+        }
+        #toolbar .btn-375{
+            width: 375px;
+            margin-left: -186px;
+            z-index: 20;
+        }
+        #toolbar .btn-425{
+            width: 425px;
+            margin-left: -213px;
+            z-index: 10;
+        }
+        #toolbar .btn-full{
+            left: 0;
+            width: 200%;
+            z-index: 1;
+        }
+
+
+        #preview{
+            display: block;
+            margin: auto;
+            border: 1px solid #aaa;
+            box-shadow: 1px 1px 5px #aaa;
+            height: calc(100% - 3em);
+        }
+
+
+    </style>
+    <script type="text/javascript" src="../internal.js"></script>
+    <script src="../../ueditor.parse.js"></script>
+    <title>Preview</title>
+</head>
+<body class="view">
+<div id="toolbar">
+    <button class="btn btn-full" onclick="setPreviewWidth('100%')" title="100%宽度">100%宽度</button>
+    <button class="btn btn-320" onclick="setPreviewWidth(320)" title="320px宽(iPhone 5)">点击调整宽度</button>
+    <button class="btn btn-375" onclick="setPreviewWidth(375)" title="375px宽(iPhone 6)">375px宽(iPhone 6)</button>
+    <button class="btn btn-425" onclick="setPreviewWidth(425)" title="425px宽(iPhone 6 Plus)">425px宽(iPhone 6 Plus)</button>
+</div>
+
+<iframe id="preview" src="about:blank"></iframe>
+
+<script type="text/template" id="previewTpl">
+    <!DOCTYPE HTML>
+    <html lang="zh">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <style>
-            html,body{
-                height:100%;
-                width:100%;
-                padding:0;
-                margin:0;
-            }
-            #preview{
-                width:100%;
-                height:100%;
-                padding:0;
-                margin:0;
-            }
-            #preview *{font-family:sans-serif;font-size:16px;}
-        </style>
-        <script type="text/javascript" src="../internal.js"></script>
-        <script src="../../ueditor.parse.js"></script>
-        <title></title>
+        <link rel="stylesheet" href="../../themes/iframe.css"/>
     </head>
-    <body class="view">
-        <div id="preview" style="margin:8px">
-
-        </div>
+    <body style="margin: 0; padding: 0.5em">
+    {{content}}
     </body>
-    <script>
-        document.getElementById('preview').innerHTML = editor.getContent();
-        uParse('#preview',{
-            rootPath : '../../',
-            chartContainerHeight:500
-        })
-        dialog.oncancel = function(){
-            document.getElementById('preview').innerHTML = '';
+    </html>
+</script>
+
+<script>
+    var $preview = document.getElementById('preview');
+    var $toolbar = document.getElementById('toolbar');
+    var $previewTpl = document.getElementById('previewTpl');
+
+    $preview.contentDocument.write($previewTpl.innerHTML.replace('{{content}}', editor.getContent()));
+
+    //    uParse('#preview', {
+    //        rootPath: '../../',
+    //        chartContainerHeight: 500
+    //    });
+
+    dialog.oncancel = function () {
+        document.getElementById('preview').innerHTML = '';
+    };
+
+    setPreviewWidth('100%');
+
+    function setPreviewWidth(width) {
+        $preview.style.width = (!isNaN(width) ? (width + 'px') : width);
+
+        if (isPreviewHasVerticalScrollBar()){
+            $preview.style.width = (!isNaN(width) ? (width + 17) + 'px' : width);
+            $toolbar.className = 'with-scroll-bar';
+        } else {
+            $preview.style.width = (!isNaN(width) ? (width + 'px') : width);
+            $toolbar.className = 'without-scroll-bar';
         }
-    </script>
+    }
+
+    function isPreviewHasVerticalScrollBar() {
+        var docElem = $preview.contentDocument.documentElement;
+        var bodyElem = $preview.contentDocument.body;
+        return docElem.clientHeight < docElem.offsetHeight - 4;
+    }
+    function isPreviewHasHorizonScrollBar() {
+        var docElem = $preview.contentDocument.documentElement;
+        var bodyElem = $preview.contentDocument.body;
+        return docElem.clientWidth < docElem.offsetWidth - 4;
+    }
+</script>
+
+</body>
 </html>
