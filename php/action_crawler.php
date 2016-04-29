@@ -5,6 +5,10 @@
  * Date: 14-04-14
  * Time: 下午19:18
  */
+
+// 防止某些服务器直接访问这个文件导致的安全隐患
+defined('FROM_UEDITOR_CONTROLLER') or die();
+
 set_time_limit(0);
 include("Uploader.class.php");
 

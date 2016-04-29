@@ -5,6 +5,10 @@
  * Date: 14-04-09
  * Time: 上午10:17
  */
+
+// 防止某些服务器直接访问这个文件导致的安全隐患
+defined('FROM_UEDITOR_CONTROLLER') or die();
+
 include "Uploader.class.php";
 
 /* 上传配置 */

@@ -1,5 +1,8 @@
 <?php
 
+// 防止某些服务器直接访问这个文件导致的安全隐患
+defined('FROM_UEDITOR_CONTROLLER') or die();
+
 /**
  * Created by JetBrains PhpStorm.
  * User: taoqili
