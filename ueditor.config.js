@@ -439,8 +439,4 @@
     window.UE = {
         getUEBasePath: getUEBasePath
     };
-
-
-    // just for debug
-    console.debug = console.log;
 })();

@@ -114,52 +114,15 @@ UE.plugin.register('simplify', function () {
         return reg;
     }
 
-    window.testPatterns = function(){
-        function assert(condition){
-            if (!condition || (condition.call && !condition.call())) {
-                console.debug("Assertion failed: " + condition);
-            }
-        }
-
-        assert(function(){
-            return doesPatternMatch('rgb(255, 255, 255)', 'rgb(255, 255, 255)');
-        });
-
-        assert(function(){
-            return doesPatternMatch('14px', '14px');
-        });
-
-        assert(function(){
-            return isDefaultCssValue('div', 'background-color', 'rgb(255, 255, 255)');
-        });
-        assert(function(){
-            return isDefaultCssValue('p', 'background-color', 'rgb(255, 255, 255)');
-        });
-        assert(function(){
-            return isDefaultCssValue('span', 'background-color', 'rgb(255, 255, 255)');
-        });
-        assert(function(){
-            return isDefaultCssValue('span', 'padding', '0');
-        });
-        assert(function(){
-            return isDefaultCssValue('span', 'color', 'rgb(64, 64, 64)');
-        });
-    };
-
-
-
     return {
         bindEvents: {
             'ready': function () {
-                console.debug("Simplify: ready");
             }
         },
         outputRule: function (root) {
-            console.debug("Simplify: outputRule: %o", arguments);
             simplify(root);
         },
         inputRule: function (root) {
-            console.debug("Simplify: inputRule: %o", arguments);
             simplify(root);
         }
     }
