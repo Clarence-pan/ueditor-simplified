@@ -30,8 +30,21 @@ UE.plugin.register('simpleupload', function (){
             'style="' + btnStyle + '">' +
             '<input id="edui_input_' + timestrap + '" type="file" accept="image/*" name="' + me.options.imageFieldName + '" ' +
             'style="' + btnStyle + '">' +
-            '</form>' +
-            '<iframe id="edui_iframe_' + timestrap + '" name="edui_iframe_' + timestrap + '" style="display:none;width:0;height:0;border:0;margin:0;padding:0;position:absolute;"></iframe>';
+            '<input type="hidden" name="toWinName" value="1" />' +
+            '</form>';
+
+            function createPostIframe()
+            {
+                var iframe = btnIframeDoc.createElement('iframe');
+                iframe.id = 'edui_iframe_' + timestrap;
+                iframe.name = 'edui_iframe_' + timestrap;
+                iframe.setAttribute('name', 'edui_iframe_' + timestrap);
+                iframe.style.cssText = "display:none;width:0;height:0;border:0;margin:0;padding:0;position:absolute;";
+                return iframe;
+            }
+
+            iframe = createPostIframe();
+            wrapper.appendChild(iframe);
 
             wrapper.className = 'edui-' + me.options.theme;
             wrapper.id = me.ui.id + '_iframeupload';
@@ -60,11 +73,24 @@ UE.plugin.register('simpleupload', function (){
                 me.focus();
                 me.execCommand('inserthtml', '<img class="loadingclass" id="' + loadingId + '" src="' + me.options.themePath + me.options.theme +'/images/spacer.gif" title="' + (me.getLang('simpleupload.loading') || '') + '" >');
 
-                function callback(){
-                    try{
-                        var link, json, loader,
-                            body = (iframe.contentDocument || iframe.contentWindow.document).body,
-                            result = body.innerText || body.textContent || '';
+                function iframeLoadCallback(){
+                    var link, json, loader;
+                    try {
+                        var result = iframe.contentWindow.name || '';
+                        iframe.contentWindow.document.write('');
+                        iframe.src = '';
+                        domUtils.un(iframe, 'load', iframeLoadCallback);
+                        wrapper.removeChild(iframe);
+                        iframe = createPostIframe();
+                        wrapper.appendChild(iframe);
+                        form.reset();
+                    } catch (er){
+                        // 使用同域名下的某网址完成跨域到同域的转换 -- 使用window.name来传输数据
+                        iframe.src = me.options.UEDITOR_HOME_URL + 'ueditor.config.js';
+                        return;
+                    }
+
+                    try {
                         json = (new Function("return " + result))();
                         link = me.options.imageUrlPrefix + json.url;
                         if(json.state == 'SUCCESS' && json.url) {
@@ -80,9 +106,8 @@ UE.plugin.register('simpleupload', function (){
                         }
                     }catch(er){
                         showErrorLoader && showErrorLoader(me.getLang('simpleupload.loadError'));
+                        console && console.error && console.error(er);
                     }
-                    form.reset();
-                    domUtils.un(iframe, 'load', callback);
                 }
                 function showErrorLoader(title){
                     if(loadingId) {
@@ -110,7 +135,7 @@ UE.plugin.register('simpleupload', function (){
                     return;
                 }
 
-                domUtils.on(iframe, 'load', callback);
+                domUtils.on(iframe, 'load', iframeLoadCallback);
                 form.action = utils.formatUrl(imageActionUrl + (imageActionUrl.indexOf('?') == -1 ? '?':'&') + params);
                 form.submit();
             });
