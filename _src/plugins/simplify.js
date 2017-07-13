@@ -14,22 +14,26 @@ UE.plugin.register('simplify', function () {
         forEach(root.children, simplify);
     }
 
-    function simplifyStyle(tagName, styles){
-        if (!tagName || !styles){
+    function simplifyStyle(tagName, stylesStr){
+        if (!tagName || !stylesStr){
             return null;
         }
 
-        if (typeof(styles) == 'string'){
-            styles = parseStyleToObject(styles);
+        if (typeof(stylesStr) == 'string'){
+            styles = parseStyleToObject(stylesStr);
+        } else {
+            styles = stylesStr
         }
 
         var simplifiedStyles = [];
 
         forEach(styles, function(val, key){
             if (!isDefaultCssValue(tagName, key, val)){
-                simplifiedStyles.push(key + ': ' + val);
+                simplifiedStyles.push(key + ':' + escAttr(val));
             }
         });
+
+        // console.log('SimplifyStyle:\n %o\n --->\n %o', stylesStr, simplifiedStyles.join('; '))
 
         return simplifiedStyles.length ? simplifiedStyles.join('; ') : null;
     }
@@ -48,8 +52,12 @@ UE.plugin.register('simplify', function () {
         }
     }
 
+    function escAttr(s){
+        return (s + '').replace(/"/g, '&quot;')
+    }
+
     function parseStyleToObject(str) {
-        var obj = {}, styles = str.split(';');
+        var obj = {}, styles = str.replace(/&quot;/g, '"').split(';');
         forEach(styles, function (v) {
             var index = v.indexOf(':'),
                 key = UE.utils.trim(v.substr(0, index)).toLowerCase();
